@@ -10,16 +10,8 @@ const candidateSchema = new mongoose.Schema({
         type: String,
         required: true,
         lowercase: true,
-        trim: true
-    },
-    job: {
-        type: mongoose.Schema.Types.ObjectId,
-        ref: 'Job',
-        required: true
-    },
-    appliedAt: {
-        type: Date,
-        default: Date.now
+        trim: true,
+        unique: true  
     }
 });
 

@@ -66,16 +66,22 @@ exports.loginCompany = async (req, res) => {
         }
 
         // Generate JWT
-        const payload = {
-            company: {
-                id: company.id,
-                isVerified: company.isVerified
-            }
-        };
-
-        const token = jwt.sign(payload, process.env.JWT_SECRET, { expiresIn: '1h' });
-
-        res.json({ token });
+        if (company.isVerified)
+        {
+            const payload = {
+                company: {
+                    id: company.id,
+                    isVerified: company.isVerified
+                }
+            };
+    
+            const token = jwt.sign(payload, process.env.JWT_SECRET, { expiresIn: '1h' });
+    
+            res.json({ token });
+        }
+        else{
+            return res.status(400).json({ msg: 'Mobile and Email verifications are pending' });
+        }
     } catch (error) {
         console.error(error.message);
         res.status(500).send('Server error');

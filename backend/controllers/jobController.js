@@ -1,18 +1,11 @@
 const Job = require('../models/Job');
 const Company = require('../models/Company');
+const { sendEmail } = require('../utils/emailService');
 
-// Create a new job
 exports.createJob = async (req, res) => {
-    const { title, description, experienceLevel, endDate } = req.body;
+    const { title, description, experienceLevel, endDate, candidates } = req.body;
 
     try {
-        // Check if company is verified
-        const company = await Company.findById(req.company.id);
-        if (!company.isVerified) {
-            return res.status(403).json({ msg: 'You must verify your account to post jobs' });
-        }
-
-        // Create job
         const job = new Job({
             title,
             description,
@@ -22,7 +15,16 @@ exports.createJob = async (req, res) => {
         });
 
         await job.save();
-        res.status(201).json(job);
+
+        // Send email to selected candidates
+        const subject = `New Job Posting: ${title}`;
+        const jobDetails = `Job Title: ${title}\nDescription: ${description}\nExperience Level: ${experienceLevel}`;
+        candidates.forEach(async (candidateEmail) => {
+            const emailText = `Dear candidate,\n\nYou have been notified about a new job posting:\n\n${jobDetails}`;
+            await sendEmail(candidateEmail, subject, emailText);
+        });
+
+        res.status(201).json({ msg: 'Job posted and email notifications sent' });
     } catch (error) {
         console.error(error.message);
         res.status(500).send('Server error');

@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { TextField, Button, Container, Typography } from '@mui/material';
 import { login } from '../services/authService';
+import { toast } from 'react-toastify';
 
 function Login() {
     const [email, setEmail] = useState('');
@@ -10,9 +11,11 @@ function Login() {
         e.preventDefault();
         try {
             const data = await login(email, password);
-            localStorage.setItem('token', data.token);  // Save the JWT token
-            window.location.href = '/job-postings';  // Redirect after login
+            localStorage.setItem('token', data.token);  
+            toast.success("Login successfully!", { autoClose: 4000});
+            window.location.href = '/';  
         } catch (error) {
+            toast.error("Login Failed! " + error.response.data.msg, { autoClose: 4000 });
             console.error('Login failed', error);
         }
     };
@@ -24,6 +27,7 @@ function Login() {
             </Typography>
             <form onSubmit={handleSubmit}>
                 <TextField
+                    required
                     label="Email"
                     fullWidth
                     margin="normal"
@@ -31,6 +35,7 @@ function Login() {
                     onChange={(e) => setEmail(e.target.value)}
                 />
                 <TextField
+                    required
                     label="Password"
                     type="password"
                     fullWidth

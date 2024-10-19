@@ -3,33 +3,25 @@ const Job = require('../models/Job');
 const { sendEmail } = require('../utils/emailService');
 
 // Add candidate and send email
-exports.addCandidateAndSendEmail = async (req, res) => {
-    const { name, email, jobId } = req.body;
+exports.addCandidate = async (req, res) => {
+    const { name, email } = req.body;
 
     try {
-        // Check if job exists
-        const job = await Job.findById(jobId);
-        if (!job) {
-            return res.status(404).json({ msg: 'Job not found' });
+        // Check if candidate with the same email already exists
+        let existingCandidate = await Candidate.findOne({ email });
+        if (existingCandidate) {
+            return res.status(400).json({ msg: 'Candidate with this email already exists' });
         }
 
-        // Add candidate to the job
+        // Add the candidate to the database
         const candidate = new Candidate({
             name,
-            email,
-            job: jobId
+            email
         });
 
         await candidate.save();
 
-        // Send email notification
-        const jobDetails = `Job Title: ${job.title}\nDescription: ${job.description}\nExperience Level: ${job.experienceLevel}`;
-        const subject = `Job Alert: ${job.title}`;
-        const emailText = `Dear ${name},\n\nYou have been added to the job posting:\n\n${jobDetails}`;
-
-        await sendEmail(email, subject, emailText);
-
-        res.status(201).json({ msg: 'Candidate added and email sent' });
+        res.status(201).json({ msg: 'Candidate added successfully' });
     } catch (error) {
         console.error(error.message);
         res.status(500).send('Server error');
