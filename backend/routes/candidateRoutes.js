@@ -1,6 +1,6 @@
 const express = require('express');
 const { check } = require('express-validator');
-const { addCandidateAndSendEmail } = require('../controllers/candidateController');
+const { addCandidateAndSendEmail, getAllCandidates } = require('../controllers/candidateController');
 const authMiddleware = require('../middlewares/authMiddleware');
 
 const router = express.Router();
@@ -12,5 +12,8 @@ router.post('/', [
     check('email', 'Please include a valid email').isEmail(),
     check('jobId', 'Job ID is required').not().isEmpty()
 ], addCandidateAndSendEmail);
+
+// Get all candidates
+router.get('/', authMiddleware, getAllCandidates);
 
 module.exports = router;

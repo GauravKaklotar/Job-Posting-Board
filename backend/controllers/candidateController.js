@@ -35,3 +35,14 @@ exports.addCandidateAndSendEmail = async (req, res) => {
         res.status(500).send('Server error');
     }
 };
+
+// Get All candidate
+exports.getAllCandidates = async (req, res) => {
+    try {
+        const candidates = await Candidate.find();
+        res.status(200).json(candidates);
+    } catch (error) {
+        console.error(error.message);
+        res.status(500).send('Server error');
+    }
+};
