@@ -1,5 +1,8 @@
 import React, { useState } from 'react';
 import { TextField, Button, Container, Typography } from '@mui/material';
+import { toast } from 'react-toastify';
+import { register } from '../services/authService';
+import { useNavigate } from 'react-router-dom';
 
 function Register() {
     const [name, setName] = useState('');
@@ -7,10 +10,18 @@ function Register() {
     const [mobile, setMobile] = useState('');
     const [password, setPassword] = useState('');
 
+    const navigate = useNavigate()
     const handleSubmit = async (e) => {
         e.preventDefault();
         // API call to register
-        console.log({ name, email, mobile, password });
+        try {
+            await register(name, email, mobile, password);
+            toast.success("Registered successfully, please verify your mobile and email", { autoClose: 4000});
+            navigate('/login');
+        } catch (error) {
+            toast.error("Error while registering: " + error.response.data.msg, {autoClose: 4000});
+            console.log(error);
+        }
     };
 
     return (
@@ -20,6 +31,7 @@ function Register() {
             </Typography>
             <form onSubmit={handleSubmit}>
                 <TextField
+                    required
                     label="Name"
                     fullWidth
                     margin="normal"
@@ -27,6 +39,7 @@ function Register() {
                     onChange={(e) => setName(e.target.value)}
                 />
                 <TextField
+                    required
                     label="Email"
                     fullWidth
                     margin="normal"
@@ -34,6 +47,7 @@ function Register() {
                     onChange={(e) => setEmail(e.target.value)}
                 />
                 <TextField
+                    required
                     label="Mobile"
                     fullWidth
                     margin="normal"
@@ -41,6 +55,7 @@ function Register() {
                     onChange={(e) => setMobile(e.target.value)}
                 />
                 <TextField
+                    required
                     label="Password"
                     type="password"
                     fullWidth

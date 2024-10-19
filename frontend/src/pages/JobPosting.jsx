@@ -3,7 +3,7 @@ import { TextField, Button, Container, Typography, MenuItem } from '@mui/materia
 import { Select, InputLabel, FormControl, Checkbox, ListItemText } from '@mui/material';
 import { getAllCandidates } from '../services/candidateService';
 import { postJob } from '../services/jobService';
-
+import { toast } from 'react-toastify';
 function JobPosting() {
     const [title, setTitle] = useState('');
     const [description, setDescription] = useState('');
@@ -13,13 +13,13 @@ function JobPosting() {
     const [selectedCandidates, setSelectedCandidates] = useState([]);
 
     // Fetch candidates on page load
-    // useEffect(() => {
-    //     async function fetchCandidates() {
-    //         const data = await getAllCandidates();
-    //         setCandidates(data);
-    //     }
-    //     fetchCandidates();
-    // }, []);
+    useEffect(() => {
+        async function fetchCandidates() {
+            const response = await getAllCandidates();
+            setCandidates(response.data);
+        }
+        fetchCandidates();
+    }, []);
 
     // Handle form submission
     const handleSubmit = async (e) => {
@@ -29,11 +29,17 @@ function JobPosting() {
             description,
             experienceLevel,
             endDate,
-            candidates: selectedCandidates  // Send selected candidates
+            candidates: selectedCandidates 
         };
         try {
-            await postJob(jobData);
-            alert('Job posted successfully and email notifications sent to selected candidates!');
+            const response = await postJob(jobData);
+            toast.success("Interview Created Successfully", { autoClose: true });
+            setTitle('');
+            setDescription('');
+            setExperienceLevel('');
+            setEndDate('');
+            setSelectedCandidates([]);
+            
         } catch (error) {
             console.error('Error posting job', error);
         }
@@ -42,7 +48,7 @@ function JobPosting() {
     return (
         <Container maxWidth="sm">
             <Typography variant="h4" gutterBottom>
-                Post a Job
+                Create Interview
             </Typography>
             <form onSubmit={handleSubmit}>
                 <TextField
@@ -59,13 +65,18 @@ function JobPosting() {
                     value={description}
                     onChange={(e) => setDescription(e.target.value)}
                 />
-                <TextField
-                    label="Experience Level"
-                    fullWidth
-                    margin="normal"
-                    value={experienceLevel}
-                    onChange={(e) => setExperienceLevel(e.target.value)}
-                />
+                <FormControl fullWidth margin="normal" variant="outlined">
+                    <InputLabel>Experience Level</InputLabel>
+                    <Select
+                        label="Experience Level"
+                        value={experienceLevel}
+                        onChange={(e) => setExperienceLevel(e.target.value)}
+                    >
+                        <MenuItem value="Entry">Entry</MenuItem>
+                        <MenuItem value="Mid">Mid</MenuItem>
+                        <MenuItem value="Senior">Senior</MenuItem>
+                    </Select>
+                </FormControl>
                 <TextField
                     label="End Date"
                     fullWidth
@@ -77,9 +88,10 @@ function JobPosting() {
                 />
 
                 {/* Candidate Selection Dropdown */}
-                <FormControl fullWidth margin="normal">
+                <FormControl fullWidth margin="normal" variant="outlined"> 
                     <InputLabel>Assign Candidates</InputLabel>
                     <Select
+                        label="Assign Candidates" 
                         multiple
                         value={selectedCandidates}
                         onChange={(e) => setSelectedCandidates(e.target.value)}
@@ -93,6 +105,7 @@ function JobPosting() {
                         ))}
                     </Select>
                 </FormControl>
+
 
                 <Button type="submit" variant="contained" color="primary" fullWidth>
                     Post Job
