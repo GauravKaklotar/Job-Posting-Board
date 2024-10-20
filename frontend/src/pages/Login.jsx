@@ -2,10 +2,12 @@ import React, { useState } from 'react';
 import { TextField, Button, Container, Typography } from '@mui/material';
 import { login } from '../services/authService';
 import { toast } from 'react-toastify';
-
+import { useNavigate} from 'react-router-dom';
+ 
 function Login() {
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
+    const navigate = useNavigate()
 
     const handleSubmit = async (e) => {
         e.preventDefault();
@@ -13,7 +15,7 @@ function Login() {
             const data = await login(email, password);
             localStorage.setItem('token', data.token);  
             toast.success("Login successfully!", { autoClose: 4000});
-            window.location.href = '/';  
+            navigate('/')
         } catch (error) {
             toast.error("Login Failed! " + error.response.data.msg, { autoClose: 4000 });
             console.error('Login failed', error);
