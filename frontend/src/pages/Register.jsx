@@ -30,8 +30,8 @@ function Register() {
         // API call to register
         try {
             await register(name, email, mobile, password);
-            toast.success("Registered successfully, please verify your mobile and email", { autoClose: 4000 });
-            navigate('/login');
+            toast.success("Registered successfully, please verify your mobile and email", { autoClose: 4000});
+            navigate('/verify-otp')
         } catch (error) {
             toast.error("Error while registering: " + error.response.data.msg, { autoClose: 4000 });
             console.log(error);

@@ -6,6 +6,7 @@ import Register from './pages/Register';
 import JobPosting from './pages/JobPosting';
 import AddCandidate from './pages/AddCandidate';
 import Dashboard from './pages/Dashboard';
+import VerifyOTP from './pages/VerifyOTP';
 import { ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 
@@ -19,6 +20,7 @@ function App() {
                 <Route path="/register" element={<Register />} />
                 <Route path="/job-posting" element={<JobPosting />} />
                 <Route path="/add-candidate" element={<AddCandidate />} />
+                <Route path="/verify-otp" element={<VerifyOTP />} />
             </Routes>
             <ToastContainer 
                 position="top-center" 
