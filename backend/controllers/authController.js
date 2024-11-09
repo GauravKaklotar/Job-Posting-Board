@@ -1,6 +1,7 @@
 const Company = require('../models/Company');
 const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
+const twilio = require('twilio');
 const { validationResult } = require('express-validator');
 
 // Register a company
@@ -80,7 +81,7 @@ exports.loginCompany = async (req, res) => {
             res.json({ token });
         }
         else{
-            return res.status(400).json({ msg: 'Mobile and Email verifications are pending' });
+            return res.status(400).json({ msg: 'Mobile verifications are pending' });
         }
     } catch (error) {
         console.error(error.message);
