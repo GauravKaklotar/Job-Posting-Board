@@ -1,6 +1,6 @@
 const express = require('express');
 const { check } = require('express-validator');
-const { registerCompany, loginCompany } = require('../controllers/authController');
+const { registerCompany, loginCompany,sendOTP,verifyOTP } = require('../controllers/authController');
 
 const router = express.Router();
 
@@ -17,5 +17,16 @@ router.post('/login', [
     check('email', 'Please include a valid email').isEmail(),
     check('password', 'Password is required').exists()
 ], loginCompany);
+
+// Send OTP route
+router.post('/send-otp', [
+    check('mobile', 'Mobile is required').not().isEmpty()
+], sendOTP);
+
+// Verify OTP route
+router.post('/verify-otp', [
+    check('mobile', 'Mobile is required').not().isEmpty(),
+    check('otp', 'OTP is required').not().isEmpty()
+], verifyOTP);
 
 module.exports = router;
